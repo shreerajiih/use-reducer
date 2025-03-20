@@ -28,6 +28,11 @@ const counterReducer = (state, action) => {
         ...state,
         subject: [...state.subject, action.payload]
       }
+      case "ErrorAPI":
+        return {
+          ...state,
+          error: action.payload
+        }
     default:
       return state;
   }
@@ -41,6 +46,12 @@ function App() {
 
   console.log("Count is ", count)
 
+  useEffect(() => {
+    fetch("https://jsonplaceholder.typ2icode.com/posts/1")
+      .then(response => response.json())
+      .catch(error => countDispatch({type:"ErrorAPI",payload:error.message}))
+  }, [])
+
   return (
     <>
       <div>
@@ -52,6 +63,7 @@ function App() {
         </a>
       </div>
       <h1>{count.number}</h1>
+      {count.error && <p>{count.error}</p>}
       <ul>
           {
             count.subject?.map(subject => <li key={subject}>{subject}</li>)
