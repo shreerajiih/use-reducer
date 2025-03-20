@@ -4,18 +4,32 @@ import viteLogo from '/vite.svg'
 import './App.css'
 
 
-const counterInitialState = 0
+const counterInitialState = {
+  number: 0,
+  subject: ["react", "angular", "vue"]
+}
 
 const counterReducer = (state, action) => {
-  switch (action) {
+  switch (action.type) {
     case "Add":
-      return state + 1;  // we shoud to return
+      return {
+        ...state,
+        number: state.number + 1
+      }
     case "Minus":
-      return state - 1;
+      return {
+        ...state,
+        number: state.number - action.payload
+      }
     case "Reset":
       return counterInitialState
+    case "AddSubject":
+      return {
+        ...state,
+        subject: [...state.subject, action.payload]
+      }
     default:
-      break;
+      return state;
   }
 }
 
@@ -24,6 +38,8 @@ const counterReducer = (state, action) => {
 function App() {
 
   const [count, countDispatch] = useReducer(counterReducer, counterInitialState)
+
+  console.log("Count is ", count)
 
   return (
     <>
@@ -35,21 +51,31 @@ function App() {
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
       </div>
-      <h1>{count}</h1>
+      <h1>{count.number}</h1>
+      <ul>
+          {
+            count.subject?.map(subject => <li key={subject}>{subject}</li>)
+          }
+      </ul>
+
       <div className="card">
-        <button onClick={() => countDispatch("Add")}>
+        <button onClick={() => countDispatch({type:"Add"})}>
           Add
         </button>
 
-        <button onClick={() => countDispatch("Minus")}>
+        <button onClick={() => countDispatch({type:"AddSubject",payload:"node"})}>
+          Add Subject
+        </button>
+
+        <button onClick={() => countDispatch({type:"Minus",payload:2})}>
           Minus
         </button>
-        <button onClick={() => countDispatch("Reset")}>
-          Reseat
+        <button onClick={() => countDispatch({type:"Reset"})}>
+          Reset
         </button>
-</div>
-      </>
-      )
+      </div>
+    </>
+  )
 }
 
-      export default App
+export default App
